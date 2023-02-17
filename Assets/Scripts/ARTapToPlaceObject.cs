@@ -188,6 +188,10 @@ public class ARTapToPlaceObject : MonoBehaviour
 
     private void ReplaceObject()
     {
+        if (collisionDetected)
+        {
+            return;
+        }
         if (toBeMoved)
         {
             Instantiate(toBeMoved, PlacementPose.position, PlacementPose.rotation);
