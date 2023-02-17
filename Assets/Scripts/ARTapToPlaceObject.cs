@@ -9,6 +9,10 @@ using UnityEngine.XR.ARSubsystems;
 public class ARTapToPlaceObject : MonoBehaviour
 {
     public GameObject placementIndicator;
+    public GameObject placementPlane;
+    public Material placementPlaneNormal;
+    public Material placementPlaneCollision;
+
     private GameObject objectToPlace = null;
     private GameObject toBeMoved = null;
 
@@ -29,6 +33,7 @@ public class ARTapToPlaceObject : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
         aRRaycastManager = FindObjectOfType<ARRaycastManager>();
         arCam = GameObject.Find("AR Camera").GetComponent<Camera>();
 
@@ -116,12 +121,16 @@ public class ARTapToPlaceObject : MonoBehaviour
         {
             placementIndicator.SetActive(true);
             placementIndicator.transform.SetPositionAndRotation(PlacementPose.position, PlacementPose.rotation);
+            var placementPlaneRenderer = placementPlane.GetComponent<Renderer>();
+
             if (collisionDetected)
             {
                 // Change color
+                placementPlaneRenderer.material = placementPlaneCollision;
             } else 
             {
                 // Change to another color
+                placementPlaneRenderer.material = placementPlaneNormal;
             }
         }
         else 
