@@ -20,6 +20,7 @@ public class ARTapToPlaceObject : MonoBehaviour
 
     private Pose PlacementPose;
     private bool placementPoseIsValid = false;
+    private bool collisionDetected = false;
 
     private ARRaycastManager aRRaycastManager;
     List<ARRaycastHit> hits = new List<ARRaycastHit>();
@@ -82,6 +83,26 @@ public class ARTapToPlaceObject : MonoBehaviour
         var screenCenter = Camera.current.ViewportToScreenPoint(new Vector3(0.5f, 0.5f));
         aRRaycastManager.Raycast(screenCenter, hits, TrackableType.Planes);
 
+        RaycastHit hit;
+        Ray ray = arCam.ScreenPointToRay(screenCenter);
+
+        if (aRRaycastManager.Raycast(screenCenter, hits)) 
+        {
+            if (Physics.Raycast(ray, out hit)) 
+            {
+                Debug.Log("Physics Raycast");
+                if (hit.collider.gameObject.tag == "Spawnable")
+                {
+                    Debug.Log("Collision detected");
+                    collisionDetected = true;
+                }
+                else
+                {
+                    collisionDetected = false;
+                }
+            }
+        }
+
         placementPoseIsValid = hits.Count > 0;
         if (placementPoseIsValid) 
         {
@@ -95,6 +116,13 @@ public class ARTapToPlaceObject : MonoBehaviour
         {
             placementIndicator.SetActive(true);
             placementIndicator.transform.SetPositionAndRotation(PlacementPose.position, PlacementPose.rotation);
+            if (collisionDetected)
+            {
+                // Change color
+            } else 
+            {
+                // Change to another color
+            }
         }
         else 
         {
@@ -109,6 +137,10 @@ public class ARTapToPlaceObject : MonoBehaviour
 
     private void SelectTable()
     {
+        if (collisionDetected)
+        {
+            return;
+        }
         objectToPlace = (GameObject) Resources.Load("Prefabs/Table", typeof(GameObject));
         if (placementPoseIsValid && Input.touchCount > 0)
         {
@@ -118,6 +150,10 @@ public class ARTapToPlaceObject : MonoBehaviour
 
     private void SelectChair()
     {
+        if (collisionDetected)
+        {
+            return;
+        }
         objectToPlace = (GameObject) Resources.Load("Prefabs/Chair", typeof(GameObject));
         if (placementPoseIsValid && Input.touchCount > 0)
         {
@@ -127,6 +163,10 @@ public class ARTapToPlaceObject : MonoBehaviour
 
     private void SelectSofa()
     {
+        if (collisionDetected)
+        {
+            return;
+        }
         Debug.Log("Sofa selected");
         objectToPlace = (GameObject) Resources.Load("Prefabs/Sofa", typeof(GameObject));
         if (placementPoseIsValid && Input.touchCount > 0)
